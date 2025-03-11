@@ -1,24 +1,68 @@
-import { FC, useMemo } from 'react';
-import { TConstructorIngredient } from '@utils-types';
+import { FC, useMemo, useState } from 'react';
+import { RequestStatus, TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
+import { useSelector } from 'react-redux';
+import {
+  construcnorAction,
+  construcnorSelectors
+} from '../../services/slice/burder-constructor/burgerConstructorSlice';
+import { useActionCreators } from '../../services/hooks/hooks';
+import {
+  orderSliceActions,
+  orderSliceSelectors
+} from '../../services/slice/order/orderSlice';
+import { getCookie } from '../../utils/cookie';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
-  /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
+  //нужно упростить
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { createOrder } = useActionCreators(orderSliceActions);
+  const orderIngredients = useSelector(
+    construcnorSelectors.getConstructorIngredients
+  );
+  const { clearConstructor } = useActionCreators(construcnorAction);
+  const bun = orderIngredients.find((item) => item.type === 'bun');
+  const ingredients = orderIngredients.filter((item) => item.type !== 'bun');
+  const newOrder = useSelector(orderSliceSelectors.getNewOrder);
+  const [isOrderModalOpen, setOrderModalOpen] = useState(false);
+  const { clearOrder } = useActionCreators(orderSliceActions);
+  const requestStatus = useSelector(orderSliceSelectors.getOrderStatus);
+
   const constructorItems = {
-    bun: {
-      price: 0
-    },
-    ingredients: []
+    bun,
+    ingredients
   };
 
-  const orderRequest = false;
+  const orderRequest = requestStatus === RequestStatus.Loading;
 
-  const orderModalData = null;
+  const orderModalData = isOrderModalOpen ? newOrder : null;
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
+
+    const accessToken = getCookie('accessToken');
+    if (!accessToken) {
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+
+    const ingredientIds = [
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((ingredient) => ingredient._id),
+      constructorItems.bun._id
+    ];
+
+    createOrder(ingredientIds);
+    setOrderModalOpen(true);
   };
-  const closeOrderModal = () => {};
+
+  const closeOrderModal = () => {
+    setOrderModalOpen(false);
+    clearOrder();
+    clearConstructor();
+  };
 
   const price = useMemo(
     () =>
@@ -29,8 +73,6 @@ export const BurgerConstructor: FC = () => {
       ),
     [constructorItems]
   );
-
-  return null;
 
   return (
     <BurgerConstructorUI

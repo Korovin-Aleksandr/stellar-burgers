@@ -1,16 +1,18 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useActionCreators } from '../../services/hooks/hooks';
+import { userActions, userSelector } from '../../services/slice/user/userSlice';
+import { useAppSelector } from '../../services/store';
 
 export const Profile: FC = () => {
-  /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
+  const { fetchUser, setUserCheck, updateUser } =
+    useActionCreators(userActions);
+
+  const user = useAppSelector(userSelector.selectUser);
 
   const [formValue, setFormValue] = useState({
-    name: user.name,
-    email: user.email,
+    name: user?.name || '',
+    email: user?.email || '',
     password: ''
   });
 
@@ -20,22 +22,34 @@ export const Profile: FC = () => {
       name: user?.name || '',
       email: user?.email || ''
     }));
+    if (!user) {
+      fetchUser()
+        .unwrap()
+        .catch(() => {})
+        .finally(() => setUserCheck());
+    }
   }, [user]);
 
   const isFormChanged =
-    formValue.name !== user?.name ||
-    formValue.email !== user?.email ||
-    !!formValue.password;
+    formValue.name.trim() !== (user?.name || '').trim() ||
+    formValue.email.trim() !== (user?.email || '').trim();
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    if (isFormChanged) {
+      await updateUser({
+        name: formValue.name,
+        email: formValue.email,
+        password: formValue.password
+      }).unwrap();
+    }
   };
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
     setFormValue({
-      name: user.name,
-      email: user.email,
+      name: user?.name || '',
+      email: user?.email || '',
       password: ''
     });
   };
@@ -56,6 +70,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };

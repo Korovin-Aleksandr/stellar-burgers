@@ -1,10 +1,21 @@
 import { ProfileOrdersUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useActionCreators } from '../../services/hooks/hooks';
+import {
+  ordersUserActions,
+  ordersUserSelector
+} from '../../services/slice/ordersUser/ordersUserSlice';
 
 export const ProfileOrders: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+  const { fetchUserOrders } = useActionCreators(ordersUserActions);
+  const orders = useSelector(ordersUserSelector.getOrders);
+
+  useEffect(() => {
+    if (!orders.length) {
+      fetchUserOrders();
+    }
+  }, [orders.length, fetchUserOrders]);
 
   return <ProfileOrdersUI orders={orders} />;
 };
