@@ -15,7 +15,6 @@ import { getCookie } from '../../utils/cookie';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
-  //нужно упростить
   const navigate = useNavigate();
   const location = useLocation();
   const { createOrder } = useActionCreators(orderSliceActions);

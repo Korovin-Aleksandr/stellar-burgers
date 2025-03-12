@@ -12,10 +12,10 @@ export const ProfileOrders: FC = () => {
   const orders = useSelector(ordersUserSelector.getOrders);
 
   useEffect(() => {
-    if (!orders.length) {
+    if (!orders || orders.length === 0) {
       fetchUserOrders();
     }
-  }, [orders.length, fetchUserOrders]);
+  }, [orders, fetchUserOrders]);
 
   return <ProfileOrdersUI orders={orders} />;
 };

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import {
   ConstructorPage,
   Feed,
@@ -15,69 +15,86 @@ import styles from './app.module.css';
 import { Modal, OrderInfo, IngredientDetails } from '@components';
 import { AppHeader } from '@components';
 import ProtectedRoute from '../protected-route';
+import { useActionCreators } from '../../services/hooks/hooks';
+import { userActions } from '../../services/slice/user/userSlice';
+import { useEffect } from 'react';
 
 const App = () => {
+  const { fetchUser, setUserCheck } = useActionCreators(userActions);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchUser()
+      .unwrap()
+      .catch(() => {})
+      .finally(() => setUserCheck());
+  }, []);
+
   const handleCloseModal = () => {
-    window.history.back();
+    navigate(-1);
   };
 
-  return (
-    <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
-      <div className={styles.app}>
-        <AppHeader />
-        <Routes>
-          <Route path='/' element={<ConstructorPage />} />
-          <Route path='/feed' element={<Feed />} />
-          <Route
-            path='/login'
-            element={
-              <ProtectedRoute isPublic>
-                <Login />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/register'
-            element={
-              <ProtectedRoute isPublic>
-                <Register />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/forgot-password'
-            element={
-              <ProtectedRoute isPublic>
-                <ForgotPassword />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/reset-password'
-            element={
-              <ProtectedRoute isPublic>
-                <ResetPassword />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/profile'
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path='/profile/orders'
-            element={
-              <ProtectedRoute>
-                <ProfileOrders />
-              </ProtectedRoute>
-            }
-          />
-          <Route path='*' element={<NotFound404 />} />
+  const background = location.state?.background;
 
+  return (
+    <div className={styles.app}>
+      <AppHeader />
+      <Routes location={background || location}>
+        <Route path='/' element={<ConstructorPage />} />
+        <Route path='/feed' element={<Feed />} />
+        <Route
+          path='/login'
+          element={
+            <ProtectedRoute isPublic>
+              <Login />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/register'
+          element={
+            <ProtectedRoute isPublic>
+              <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/forgot-password'
+          element={
+            <ProtectedRoute isPublic>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/reset-password'
+          element={
+            <ProtectedRoute isPublic>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile/orders'
+          element={
+            <ProtectedRoute>
+              <ProfileOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='*' element={<NotFound404 />} />
+      </Routes>
+      {background && (
+        <Routes>
           <Route
             path='/feed/:number'
             element={
@@ -105,8 +122,8 @@ const App = () => {
             }
           />
         </Routes>
-      </div>
-    </Router>
+      )}
+    </div>
   );
 };
 

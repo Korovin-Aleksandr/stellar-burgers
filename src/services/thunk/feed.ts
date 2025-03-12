@@ -2,7 +2,7 @@ import { getFeedsApi, TFeedsResponse } from '@api';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FEED_SLICE_NAME } from '../slice/name';
 
-export const fetchOrders = createAsyncThunk<TFeedsResponse, void>(
+export const fetchOrders = createAsyncThunk(
   `${FEED_SLICE_NAME}/fetchOrders`,
   async (_, { rejectWithValue }) => {
     try {

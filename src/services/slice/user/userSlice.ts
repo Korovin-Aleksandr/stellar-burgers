@@ -44,9 +44,11 @@ const userSlice = createSlice({
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.requestStatus = RequestStatus.Success;
         state.data = action.payload.user;
+        state.userCheck = true;
       })
       .addCase(fetchUser.rejected, (state) => {
         state.requestStatus = RequestStatus.Failed;
+        state.userCheck = true;
       })
       .addCase(registerUser.pending, (state) => {
         state.requestStatus = RequestStatus.Loading;
@@ -54,6 +56,7 @@ const userSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action) => {
         state.requestStatus = RequestStatus.Success;
         state.data = action.payload.user;
+        state.userCheck = true;
       })
       .addCase(registerUser.rejected, (state) => {
         state.requestStatus = RequestStatus.Failed;
@@ -64,6 +67,7 @@ const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.requestStatus = RequestStatus.Success;
         state.data = action.payload.user;
+        state.userCheck = true;
       })
       .addCase(loginUser.rejected, (state) => {
         state.requestStatus = RequestStatus.Failed;
@@ -74,7 +78,6 @@ const userSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.requestStatus = RequestStatus.Success;
         state.data = null;
-        state.userCheck = false;
       })
       .addCase(logoutUser.rejected, (state) => {
         state.requestStatus = RequestStatus.Failed;

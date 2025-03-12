@@ -18,7 +18,8 @@ export const ordersUserSlice = createSlice({
   initialState,
   reducers: {},
   selectors: {
-    getOrders: (state) => state.orders
+    getOrders: (state) => state.orders,
+    getRequestStatus: (state) => state.requestStatus
   },
   extraReducers: (builder) => {
     builder

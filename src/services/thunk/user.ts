@@ -31,8 +31,8 @@ export const registerUser = createAppAsyncThunk<TAuthResponse, TRegisterData>(
   }
 );
 
-export const fetchUser = createAppAsyncThunk<TUserResponse, void>(
-  `${USER_SLICE_NAME}/checkUserAuth`,
+export const fetchUser = createAppAsyncThunk(
+  `${USER_SLICE_NAME}/fetchUser`,
   async (_, { rejectWithValue }) => {
     try {
       const response = await getUserApi();

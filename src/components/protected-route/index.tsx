@@ -1,8 +1,7 @@
 import { Preloader } from '@ui';
 import { userSelector } from '../../services/slice/user/userSlice';
 import { useAppSelector } from '../../services/store';
-import { Navigate } from 'react-router-dom';
-
+import { Navigate, useLocation } from 'react-router-dom';
 type ProtectedRouteProps = {
   children: React.ReactNode;
   isPublic?: boolean;
@@ -10,20 +9,22 @@ type ProtectedRouteProps = {
 
 function ProtectedRoute({ children, isPublic }: ProtectedRouteProps) {
   const user = useAppSelector(userSelector.selectUser);
-  const userCheck = useAppSelector(userSelector.selectUserCheck);
+  const isAuthChecked = useAppSelector(userSelector.selectUserCheck);
+  const location = useLocation();
 
-  //не понимаю, как это реализовать
-  // if (!userCheck) {
-  //   return <Preloader />;
-  // }
+  if (!isAuthChecked) {
+    return <Preloader />;
+  }
 
   if (isPublic && user) {
-    return <Navigate to='/profile' />;
+    const from = location.state?.from?.pathname || '/profile';
+    return <Navigate to={from} />;
   }
 
   if (!isPublic && !user) {
-    return <Navigate to='/login' />;
+    return <Navigate to='/login' state={{ from: location }} />;
   }
+
   return children;
 }
 
