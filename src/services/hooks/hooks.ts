@@ -6,9 +6,8 @@ import {
   bindActionCreators,
   createAsyncThunk
 } from '@reduxjs/toolkit';
-import { getJSDocReturnType } from 'typescript';
 import { AppDispatch, RootState } from '../store';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from '../../services/store';
 
 export const createAppAsyncThunk = createAsyncThunk.withTypes<{
   extra: any;

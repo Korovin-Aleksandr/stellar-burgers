@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import { ingredientsSelectors } from '../../services/slice/ingredients/ingredientsSlice';
 import {
   orderSliceSelectors,

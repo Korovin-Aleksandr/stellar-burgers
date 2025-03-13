@@ -41,4 +41,9 @@ export const ingredientsSlice = createSlice({
 
 export const ingredientsSelectors = ingredientsSlice.selectors;
 
+export const ingredientsActions = {
+  ...ingredientsSlice.actions,
+  fetchIngredients
+};
+
 export default ingredientsSlice;

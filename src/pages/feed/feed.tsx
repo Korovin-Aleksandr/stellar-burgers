@@ -3,7 +3,7 @@ import { FeedUI } from '@ui-pages';
 import { FC, SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { useActionCreators } from '../../services/hooks/hooks';
 import { feedActions, feedSelectors } from '../../services/slice/feeds/feed';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import { useDispatch } from '../../services/store';
 import { fetchIngredients } from '../../services/thunk/ingredients';
 import { RequestStatus } from '@utils-types';

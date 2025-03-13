@@ -1,7 +1,7 @@
 import { FC, useMemo, useState } from 'react';
 import { RequestStatus, TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import {
   construcnorAction,
   construcnorSelectors

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { AppHeaderUI } from '@ui';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import { userSelector } from '../../services/slice/user/userSlice';
 
 export const AppHeader: FC = () => {
