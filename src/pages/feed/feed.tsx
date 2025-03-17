@@ -1,15 +1,47 @@
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
-import { FC } from 'react';
+import { FC, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { useActionCreators } from '../../services/hooks/hooks';
+import { feedActions, feedSelectors } from '../../services/slice/feeds/feed';
+import { useSelector } from '../../services/store';
+import { useDispatch } from '../../services/store';
+import { fetchIngredients } from '../../services/thunk/ingredients';
+import { RequestStatus } from '@utils-types';
+import { orderSliceSelectors } from '../../services/slice/order/orderSlice';
 
 export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+  const dispatch = useDispatch();
+  const { fetchOrders } = useActionCreators(feedActions);
+  const orders = useSelector(feedSelectors.getOrders);
+  const requestStatus = useSelector(orderSliceSelectors.getOrderStatus);
 
-  if (!orders.length) {
+  const [isFetching, setIsFetching] = useState(false);
+
+  useEffect(() => {
+    if (!orders.length) {
+      dispatch(fetchIngredients());
+      fetchOrders();
+    }
+  }, [orders.length, dispatch, fetchOrders]);
+
+  const handleGetFeeds = useCallback(
+    async (e?: SyntheticEvent) => {
+      e?.preventDefault();
+
+      setIsFetching(true);
+
+      try {
+        await fetchOrders();
+      } finally {
+        setIsFetching(false);
+      }
+    },
+    [fetchOrders]
+  );
+
+  if (requestStatus === RequestStatus.Loading || isFetching) {
     return <Preloader />;
   }
 
-  <FeedUI orders={orders} handleGetFeeds={() => {}} />;
+  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };
